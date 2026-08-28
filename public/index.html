@@ -1,323 +1,356 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Voz em Música</title>
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Voz em Música • IA Musical</title>
   <style>
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      color: #f4f5ff;
-      font-family: Arial, sans-serif;
-      background:
-        radial-gradient(circle at top left, #2c1767 0%, transparent 34%),
-        radial-gradient(circle at bottom right, #1b4b73 0%, transparent 35%),
-        #090b17;
+    :root {
+      --bg: #0b0f19;
+      --card: #131b2e;
+      --card-border: #1f2d4d;
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --success: #10b981;
+      --danger: #ef4444;
     }
 
-    .app {
-      max-width: 820px;
-      margin: auto;
-      padding: 38px 18px;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 32px;
+      max-width: 520px;
+      width: 100%;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
     }
 
     header {
       text-align: center;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
 
     h1 {
-      margin: 0;
-      font-size: clamp(32px, 7vw, 48px);
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #a5b4fc, #6366f1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
-    h1 span {
-      color: #b498ff;
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.4;
     }
 
-    .subtitle {
-      max-width: 600px;
-      margin: 12px auto 0;
-      color: #b8bdd3;
-      line-height: 1.55;
-    }
-
-    .card {
-      padding: 24px;
-      margin: 18px 0;
-      border: 1px solid #30365c;
-      border-radius: 20px;
-      background: rgba(20, 23, 42, 0.92);
-      box-shadow: 0 16px 40px rgba(0, 0, 0, .22);
-    }
-
-    h2 {
-      margin-top: 0;
-      font-size: 20px;
+    .form-group {
+      margin-bottom: 20px;
     }
 
     label {
       display: block;
-      margin: 18px 0 8px;
-      font-weight: bold;
-    }
-
-    input[type="file"],
-    select,
-    input[type="range"] {
-      width: 100%;
-    }
-
-    input[type="file"],
-    select {
-      padding: 12px;
-      color: white;
-      border: 1px solid #3b4166;
-      border-radius: 11px;
-      background: #0d1020;
-    }
-
-    .hint {
-      display: block;
-      margin-top: 7px;
-      color: #9da3bb;
       font-size: 13px;
-      line-height: 1.4;
-    }
-
-    .bpm-line {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
+      font-weight: 600;
+      color: var(--text-muted);
       margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
-    #bpmv {
-      color: #b498ff;
-    }
-
-    .checks {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-    }
-
-    .checks label,
-    .voice-option {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      margin: 0;
-      padding: 12px;
-      font-weight: normal;
-      border: 1px solid #30365c;
-      border-radius: 11px;
-      background: #0d1020;
-      cursor: pointer;
-    }
-
-    .checks input,
-    .voice-option input {
-      width: auto;
-      accent-color: #8b5cf6;
-    }
-
-    button {
-      width: 100%;
-      padding: 15px;
-      margin-top: 25px;
-      color: white;
-      font-size: 16px;
-      font-weight: bold;
-      border: 0;
-      border-radius: 13px;
-      cursor: pointer;
-      background: linear-gradient(90deg, #6544e8, #a442e8);
-      transition: transform .15s, opacity .15s;
-    }
-
-    button:hover { transform: translateY(-1px); }
-    button:disabled { opacity: .55; cursor: wait; transform: none; }
-
-    #status {
-      min-height: 22px;
-      margin: 16px 0 0;
+    .dropzone {
+      border: 2px dashed var(--card-border);
+      border-radius: 12px;
+      padding: 24px;
       text-align: center;
-      color: #c4b5fd;
+      cursor: pointer;
+      transition: border-color 0.2s, background-color 0.2s;
     }
 
-    .error { color: #fda4af !important; }
+    .dropzone:hover {
+      border-color: var(--accent);
+      background-color: rgba(99, 102, 241, 0.05);
+    }
 
-    .result {
+    .dropzone input {
       display: none;
     }
 
-    .meta {
-      color: #b6c2ff;
-      line-height: 1.5;
+    .dropzone-text {
+      font-size: 14px;
+      color: var(--text-muted);
     }
 
-    audio {
+    .dropzone-text strong {
+      color: var(--accent);
+    }
+
+    .file-name {
+      margin-top: 8px;
+      font-size: 13px;
+      color: var(--success);
+      font-weight: 500;
+      word-break: break-all;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    select, input[type="number"] {
       width: 100%;
-      margin: 16px 0;
+      background: #0d1322;
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    select:focus, input[type="number"]:focus {
+      border-color: var(--accent);
+    }
+
+    .instruments-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .checkbox-tag {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #0d1322;
+      border: 1px solid var(--card-border);
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .checkbox-tag input {
+      accent-color: var(--accent);
+    }
+
+    .btn {
+      width: 100%;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      margin-top: 8px;
+    }
+
+    .btn:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    #status {
+      margin-top: 16px;
+      text-align: center;
+      font-size: 14px;
+      color: var(--text-muted);
+      min-height: 20px;
+    }
+
+    #status.err {
+      color: var(--danger);
+    }
+
+    #result {
+      display: none;
+      margin-top: 24px;
+      background: #0d1322;
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    #result audio {
+      width: 100%;
+      margin-bottom: 12px;
+      outline: none;
+    }
+
+    .meta {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      text-align: center;
     }
 
     .downloads {
       display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
+      gap: 8px;
     }
 
     .downloads a {
-      padding: 10px 14px;
-      color: white;
+      flex: 1;
+      text-align: center;
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid var(--accent);
+      color: #a5b4fc;
       text-decoration: none;
-      border: 1px solid #7357db;
-      border-radius: 10px;
-      background: #24204a;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
     }
 
-    @media (max-width: 520px) {
-      .checks { grid-template-columns: 1fr; }
-      .card { padding: 18px; }
+    .downloads a:hover {
+      background: var(--accent);
+      color: #fff;
     }
   </style>
 </head>
-
 <body>
-  <main class="app">
+  <div class="container">
     <header>
-      <h1>🎵 Voz em <span>Música</span></h1>
-      <p class="subtitle">
-        Envie uma melodia cantada. O sistema identifica uma tonalidade provável,
-        cria acordes e gera um arranjo instrumental para sua voz.
-      </p>
+      <h1>Voz em Música</h1>
+      <p class="subtitle">Grave ou envie um áudio cantando e crie uma produção musical com harmonia completa.</p>
     </header>
 
-    <form id="form" class="card">
-      <h2>Crie seu arranjo</h2>
-
-      <label for="audio">1. Sua voz cantada</label>
-      <input
-        id="audio"
-        name="audio"
-        type="file"
-        accept="audio/*,video/mp4"
-        required
-      >
-      <small class="hint">
-        Use uma voz clara, sem instrumentos ao fundo, entre 5 segundos e 2 minutos.
-        Formatos: MP3, WAV, M4A, OGG, MP4 ou WebM.
-      </small>
-
-      <label for="style">2. Estilo musical</label>
-      <select id="style" name="style">
-        <option value="gospel">Gospel / Worship</option>
-        <option value="pop">Pop moderno</option>
-        <option value="sertanejo">Sertanejo</option>
-        <option value="acustico">Acústico</option>
-        <option value="lofi">Lo-Fi / Chill</option>
-      </select>
-
-      <label for="bpm">3. Velocidade</label>
-      <div class="bpm-line">
-        <span>Andamento</span>
-        <strong id="bpmv">72 BPM</strong>
-      </div>
-      <input
-        id="bpm"
-        name="bpm"
-        type="range"
-        min="45"
-        max="180"
-        value="72"
-      >
-
-      <label>4. Instrumentos</label>
-      <div class="checks">
-        <label><input type="checkbox" value="piano" checked> 🎹 Piano</label>
-        <label><input type="checkbox" value="pad" checked> 🌌 Pad</label>
-        <label><input type="checkbox" value="cordas" checked> 🎻 Cordas</label>
-        <label><input type="checkbox" value="baixo" checked> 🎸 Baixo</label>
-        <label><input type="checkbox" value="bateria" checked> 🥁 Bateria</label>
-        <label><input type="checkbox" value="violao"> 🪕 Violão</label>
+    <form id="form">
+      <div class="form-group">
+        <label>Áudio da sua Voz</label>
+        <div class="dropzone" id="dropzone">
+          <input type="file" id="audio" accept="audio/*,video/*" />
+          <div class="dropzone-text">
+            <strong>Clique para escolher</strong> ou arraste seu áudio aqui
+          </div>
+          <div class="file-name" id="fileName"></div>
+        </div>
       </div>
 
-      <label class="voice-option">
-        <input id="keepVoice" name="keepVoice" type="checkbox" checked>
-        Manter minha voz original na música final
-      </label>
+      <div class="form-group grid-2">
+        <div>
+          <label for="style">Estilo Harmônico</label>
+          <select id="style">
+            <option value="gospel">Gospel / Adoração</option>
+            <option value="pop">Pop / Acústico</option>
+            <option value="sertanejo">Sertanejo</option>
+            <option value="lofi">Lo-Fi / Suave</option>
+          </select>
+        </div>
+        <div>
+          <label for="bpm">BPM (Andamento)</label>
+          <input type="number" id="bpm" value="72" min="45" max="180" />
+        </div>
+      </div>
 
-      <button id="go" type="submit">CRIAR ARRANJO</button>
-      <p id="status"></p>
+      <div class="form-group">
+        <label>Instrumentos no Arranjo</label>
+        <div class="instruments-grid">
+          <label class="checkbox-tag"><input type="checkbox" name="inst" value="piano" checked /> Piano</label>
+          <label class="checkbox-tag"><input type="checkbox" name="inst" value="pad" checked /> Pad</label>
+          <label class="checkbox-tag"><input type="checkbox" name="inst" value="cordas" checked /> Cordas</label>
+          <label class="checkbox-tag"><input type="checkbox" name="inst" value="violao" checked /> Violão</label>
+          <label class="checkbox-tag"><input type="checkbox" name="inst" value="baixo" checked /> Baixo</label>
+          <label class="checkbox-tag"><input type="checkbox" name="inst" value="bateria" checked /> Bateria</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="checkbox-tag" style="padding: 10px;">
+          <input type="checkbox" id="keepVoice" checked />
+          <span>Manter minha voz na música final (Mixada)</span>
+        </label>
+      </div>
+
+      <button type="submit" class="btn" id="btnSubmit">Criar Música Agora</button>
     </form>
 
-    <section id="result" class="card result">
-      <h2>✅ Seu arranjo está pronto</h2>
-      <p id="meta" class="meta"></p>
+    <div id="status"></div>
 
+    <div id="result">
       <audio id="player" controls></audio>
-
+      <div class="meta" id="meta"></div>
       <div class="downloads">
-        <a id="wav" download="minha-musica.wav">⬇ Baixar áudio WAV</a>
-        <a id="midi" download="meu-arranjo.mid">⬇ Baixar MIDI</a>
+        <a id="wavLink" download="musica_final.wav">Baixar Áudio WAV</a>
+        <a id="midiLink" download="arranjo.mid">Baixar MIDI</a>
       </div>
-    </section>
-  </main>
+    </div>
+  </div>
 
   <script>
-    const form = document.querySelector("#form");
-    const status = document.querySelector("#status");
-    const button = document.querySelector("#go");
-    const bpm = document.querySelector("#bpm");
-    const bpmValue = document.querySelector("#bpmv");
-    const result = document.querySelector("#result");
-    const player = document.querySelector("#player");
-    const wav = document.querySelector("#wav");
-    const midi = document.querySelector("#midi");
-    const meta = document.querySelector("#meta");
+    const form = document.getElementById("form");
+    const audioInput = document.getElementById("audio");
+    const dropzone = document.getElementById("dropzone");
+    const fileName = document.getElementById("fileName");
+    const btnSubmit = document.getElementById("btnSubmit");
+    const status = document.getElementById("status");
+    const result = document.getElementById("result");
+    const player = document.getElementById("player");
+    const meta = document.getElementById("meta");
+    const wavLink = document.getElementById("wavLink");
+    const midiLink = document.getElementById("midiLink");
 
-    bpm.addEventListener("input", () => {
-      bpmValue.textContent = `${bpm.value} BPM`;
+    dropzone.addEventListener("click", () => audioInput.click());
+    audioInput.addEventListener("change", () => {
+      if (audioInput.files.length) {
+        fileName.textContent = "Arquivo selecionado: " + audioInput.files[0].name;
+      }
     });
 
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-      const file = form.audio.files[0];
-
-      if (!file) {
-        status.textContent = "Escolha um arquivo de áudio primeiro.";
-        status.className = "error";
+      if (!audioInput.files.length) {
+        status.className = "err";
+        status.textContent = "Por favor, selecione um arquivo de áudio antes de continuar.";
         return;
       }
 
-      const instruments = [
-        ...document.querySelectorAll(".checks input:checked")
-      ].map((input) => input.value);
-
-      if (instruments.length === 0) {
-        status.textContent = "Escolha pelo menos um instrumento.";
-        status.className = "error";
-        return;
-      }
+      const instruments = Array.from(
+        document.querySelectorAll('input[name="inst"]:checked')
+      ).map((i) => i.value);
 
       const data = new FormData();
-      data.append("audio", file);
-      data.append("style", form.style.value);
-      data.append("bpm", form.bpm.value);
-      data.append("keepVoice", form.keepVoice.checked);
+      data.append("audio", audioInput.files[0]);
+      data.append("style", document.getElementById("style").value);
+      data.append("bpm", document.getElementById("bpm").value);
+      data.append("keepVoice", document.getElementById("keepVoice").checked);
       data.append("instruments", JSON.stringify(instruments));
 
-      button.disabled = true;
+      btnSubmit.disabled = true;
       result.style.display = "none";
       status.className = "";
-      status.textContent =
-        "Analisando sua voz, detectando o tom e criando o arranjo…";
+      status.textContent = "Analisando sua voz, detectando o tom e criando o arranjo…";
 
       try {
         const response = await fetch("/api/generate", {
@@ -325,15 +358,26 @@
           body: data
         });
 
-        const dataResponse = await response.json();
+        const rawText = await response.text();
+        let dataResponse = {};
+
+        try {
+          if (rawText) {
+            dataResponse = JSON.parse(rawText);
+          }
+        } catch (erro) {
+          throw new Error(
+            `O servidor respondeu de forma inválida (código ${response.status}). Aguarde um pouco e tente novamente.`
+          );
+        }
 
         if (!response.ok) {
           throw new Error(dataResponse.error || "Não foi possível gerar a música.");
         }
 
         player.src = dataResponse.audioUrl;
-        wav.href = dataResponse.audioUrl;
-        midi.href = dataResponse.midiUrl;
+        wavLink.href = dataResponse.audioUrl;
+        midiLink.href = dataResponse.midiUrl;
 
         meta.textContent =
           `Tom detectado: ${dataResponse.key} • ` +
@@ -342,12 +386,12 @@
           `${dataResponse.bars} compassos`;
 
         result.style.display = "block";
-        status.textContent = "Arranjo criado com sucesso!";
-      } catch (error) {
-        status.textContent = error.message;
-        status.className = "error";
+        status.textContent = "Música criada com sucesso!";
+      } catch (err) {
+        status.className = "err";
+        status.textContent = err.message;
       } finally {
-        button.disabled = false;
+        btnSubmit.disabled = false;
       }
     });
   </script>
