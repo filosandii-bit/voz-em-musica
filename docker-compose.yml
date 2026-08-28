@@ -1,0 +1,14 @@
+services:
+  voz-em-musica:
+    build: .
+    container_name: voz-em-musica
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      MAX_UPLOAD_MB: 25
+      JOB_TTL_HOURS: 24
+    volumes:
+      - ./data:/app/data
